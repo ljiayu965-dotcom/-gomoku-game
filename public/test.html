@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>WS Test</title></head>
+<body>
+<h1>WebSocket 测试</h1>
+<div id="status"></div>
+<script>
+const s = document.getElementById('status');
+s.textContent = 'Step 1: Creating WebSocket...';
+try {
+  const ws = new WebSocket('ws://localhost:3456');
+  s.textContent += '\nStep 2: WebSocket created, waiting...';
+  ws.onopen = () => {
+    s.textContent += '\nStep 3: CONNECTED! ✅';
+    ws.close();
+  };
+  ws.onerror = (e) => {
+    s.textContent += '\nStep 3: ERROR ❌';
+  };
+  ws.onclose = () => {
+    s.textContent += '\nStep 4: Connection closed';
+  };
+} catch(e) {
+  s.textContent += '\nERROR creating WebSocket: ' + e.message;
+}
+</script>
+</body>
+</html>
