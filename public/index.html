@@ -343,7 +343,6 @@
     </div>
 
     <div class="actions">
-      <button onclick="requestUndo()">↩ 悔棋</button>
       <button onclick="requestRestart()">🔄 重新开始</button>
       <button onclick="leaveRoom()">🚪 退出房间</button>
     </div>
@@ -659,11 +658,6 @@ function skipExtraMove() {
   extraMoveAvailable = false;
   hideSecretPanel();
   myTurn = false;
-}
-
-function requestUndo() {
-  if (!ws || ws.readyState !== 1) return;
-  ws.send(JSON.stringify({ type: 'undo' }));
 }
 
 function requestRestart() {
