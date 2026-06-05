@@ -232,13 +232,19 @@ wss.on('connection', (ws) => {
         break;
       }
 
-      // ---- 悔棋 ----
+      // ---- 悔棋（仅黑方可悔） ----
       case 'undo': {
         const info = clients.get(ws);
         if (!info) return;
         const room = rooms.get(info.roomCode);
         if (!room) return;
         if (room.history.length === 0) return;
+
+        // 白方不允许悔棋
+        if (info.role === 'white') {
+          send(ws, { type: 'error', message: '白方不能悔棋' });
+          return;
+        }
 
         // 只能悔自己的棋
         const last = room.history[room.history.length - 1];
