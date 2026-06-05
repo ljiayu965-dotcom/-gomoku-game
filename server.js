@@ -193,21 +193,22 @@ wss.on('connection', (ws) => {
         // 黑方逻辑：黑方每次可以下 1 或 2 颗
         // moveInTurn 追踪黑方当前回合下了几颗
         if (info.role === 'black') {
-          // 黑方下完第 1 颗后，告诉黑方客户端：你可以选择再下一颗或者跳过
-          // 客户端会弹出一个选择
+          // 黑方每轮最多下 2 颗
           if (room.moveInTurn < 2) {
-            // 黑方还能再下一颗（由客户端决定是否下）
+            // 下完第 1 颗 → 告诉黑方：你可以再下一颗
             send(room.black, {
               type: 'extra-move-available',
               message: '你可以再下一颗（仅自己可见）',
             });
-            // 注意：此时 turn 仍然是 'black'，白方看到的是等待状态
-            // 白方只知道黑方在下，不知道黑方还能下几颗
+            // turn 仍是 'black'，白方只看到黑方还在下
+          } else {
+            // 黑方已下完 2 颗 → 强制切换到白方
+            room.turn = 'white';
+            room.moveInTurn = 0;
+            broadcast(info.roomCode, { type: 'turn-change', turn: 'white' });
           }
-          // 如果黑方下完第 2 颗（或选择跳过），切换到白方
-          // 黑方客户端会发送 'end-turn' 消息来跳过
         } else {
-          // 白方只能下 1 颗，自动切换到黑方
+          // 白方只能下 1 颗 → 自动切换到黑方
           room.turn = 'black';
           room.moveInTurn = 0;
           broadcast(info.roomCode, { type: 'turn-change', turn: 'black' });
